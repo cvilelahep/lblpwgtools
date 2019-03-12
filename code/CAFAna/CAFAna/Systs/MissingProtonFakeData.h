@@ -6,6 +6,8 @@
 #include "StandardRecord/StandardRecord.h"
 
 #include "BDTReweighter.h"
+#include "MissingProtonFakeData_BDTRW_FHC.h"
+#include "MissingProtonFakeData_BDTRW_RHC.h"
 
 #include <memory>
 #include <sstream>
@@ -53,7 +55,7 @@ public:
     for (int i = 0; i < 5; i++) features[i].fvalue = 0;
       
     bool foundMode = true;
-    switch(mode) {
+    switch(sr->dune.GENIE_ScatteringMode) {
     case 1 : features[0].fvalue = 1.;
       break;
     case 3:  features[1].fvalue = 1.;
@@ -66,7 +68,7 @@ public:
       break;
     default :
       foundMode = false;
-      std::cout << "Warning... GENIE mode " << mode << " unknown to the reweighting BDT" << std::endl;
+      std::cout << "Warning... GENIE mode " << sr->dune.GENIE_ScatteringMode << " unknown to the reweighting BDT" << std::endl;
     }
 
     double wght_val = bdt_reweighter[sr->dune.nuPDG > 0 ? 0 : 1]->GetWeight(features, 1);
