@@ -1,7 +1,7 @@
 #include "BDTReweighter.h"
 class MissingProtonFakeData_BDTRW_FHC : public BDTReweighter {
  public :
- MissingProtonFakeData_BDTRW_FHC() : BDTReweighter(1.) {;}
+ MissingProtonFakeData_BDTRW_FHC() : BDTReweighter(1.04870996193) {;}
   ~MissingProtonFakeData_BDTRW_FHC() {;}
 
 size_t get_num_output_group(void) {

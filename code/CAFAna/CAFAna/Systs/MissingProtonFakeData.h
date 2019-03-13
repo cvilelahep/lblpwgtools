@@ -68,12 +68,12 @@ public:
       break;
     default :
       foundMode = false;
-      std::cout << "Warning... GENIE mode " << sr->dune.GENIE_ScatteringMode << " unknown to the reweighting BDT" << std::endl;
     }
 
-    double wght_val = bdt_reweighter[sr->dune.nuPDG > 0 ? 0 : 1]->GetWeight(features, 1);
-
-    weight *= wght_val;
+    if (foundMode) {
+      double wght_val = bdt_reweighter[sr->dune.nuPDG > 0 ? 0 : 1]->GetWeight(features, 1);
+      weight *= wght_val;
+    }
   }
 
 public:
