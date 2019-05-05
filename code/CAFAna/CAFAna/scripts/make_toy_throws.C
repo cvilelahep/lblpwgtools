@@ -7,15 +7,16 @@ void make_toy_throws(std::string stateFname = "common_state_mcc11v3.root",
                      std::string sampleString = "ndfd",
                      std::string throwString = "stat:fake:start",
                      std::string penaltyString = "nopen",
-                     std::string oscVarString = "th13:deltapi:th23:dmsq32",
-		     int hie=1) {
+                     int hie=1,
+		     std::string asimov_set="0",
+		     std::string oscVarString = "th13:deltapi:th23:dmsq32") {
 
   gROOT->SetBatch(1);
   gRandom->SetSeed(0);
 
   // Decide what is to be thrown
-  bool stats_throw, fake_throw, start_throw, central_throw;
-  ParseThrowInstructions(throwString, stats_throw, fake_throw, start_throw, central_throw);
+  bool stats_throw, fakeoa_throw, fakenuis_throw, start_throw, central_throw;
+  ParseThrowInstructions(throwString, stats_throw, fakeoa_throw, fakenuis_throw, start_throw, central_throw);
 
   // Get the systematics to use
   std::vector<const ISyst *> systlist = GetListOfSysts(systSet);
@@ -23,7 +24,14 @@ void make_toy_throws(std::string stateFname = "common_state_mcc11v3.root",
   // Oscillation parameters to use
   std::vector<const IFitVar*> oscVars = {};
   if (sampleString.find("fd") != std::string::npos) {
-    oscVars = GetOscVars(oscVarString);
+    oscVars = GetOscVars(oscVarString, hie);
+  }
+
+  // Deal with seeds once
+  std::map<const IFitVar*, std::vector<double>> oscSeeds;
+  if (sampleString.find("fd") != std::string::npos) {
+    oscSeeds[&kFitSinSqTheta23] = {.4, .6}; // try both octants                                                                                                              
+    oscSeeds[&kFitDeltaInPiUnits] = {-1, -0.5, 0, 0.5};
   }
 
   // Setup output file
@@ -41,11 +49,11 @@ void make_toy_throws(std::string stateFname = "common_state_mcc11v3.root",
     osc::IOscCalculatorAdjustable *fakeThrowOsc;
     
     // First deal with OA parameters
-    if (fake_throw || central_throw) fakeThrowOsc = ThrownWideOscCalc(hie, oscVars);
-    else fakeThrowOsc = NuFitOscCalc(hie);
+    if (fakeoa_throw || central_throw) fakeThrowOsc = ThrownWideOscCalc(hie, oscVars);
+    else fakeThrowOsc = NuFitOscCalc(hie, 1, asimov_set);
       
     // Now deal with systematics
-    if (fake_throw and not central_throw){
+    if (fakenuis_throw and not central_throw){
       for (auto s : systlist)
 	fakeThrowSyst.SetShift(s, GetBoundedGausThrow(s->Min() * 0.8, s->Max() * 0.8));
     } else fakeThrowSyst = kNoShift;
@@ -64,15 +72,9 @@ void make_toy_throws(std::string stateFname = "common_state_mcc11v3.root",
       fitThrowOsc = ThrownWideOscCalc(hie, oscVars);
     } else {
       fitThrowSyst = kNoShift;
-      fitThrowOsc = NuFitOscCalc(hie);
+      fitThrowOsc = NuFitOscCalc(hie, 1, asimov_set);
     }
     Fitter::Precision fitStrategy = Fitter::kNormal; //|Fitter::kIncludeHesse;
-    // Now do a fit with thrown seeds
-    std::map<const IFitVar*, std::vector<double>> oscSeeds;
-    if (sampleString.find("fd") != std::string::npos) {
-      oscSeeds[&kFitSinSqTheta23] = {.4, .6}; // try both octants
-      oscSeeds[&kFitDeltaInPiUnits] = {0, 0.5, 1, 1.5}; // Hold CAFAna's hand
-    }
 
     IExperiment *penalty = GetPenalty(hie, 1, penaltyString);
 
@@ -84,6 +86,7 @@ void make_toy_throws(std::string stateFname = "common_state_mcc11v3.root",
     std::cout << "Throw " << i << ": found minimum chi2 = " << thischisq
               << std::endl;
     // Done with this systematic throw
+    delete penalty;
   }
 
   // Now close the file
