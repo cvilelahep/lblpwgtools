@@ -84,8 +84,12 @@ cd build
 mkdir Ext
 cd Ext
 
-svn checkout http://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/OscLib
-svn checkout http://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/Utilities
+#svn: E170011: Repository moved temporarily to 'https://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/OscLib'
+#svn: E170011: Repository moved temporarily to 'https://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/Utilities'
+#svn checkout http://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/OscLib
+#svn checkout http://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/Utilities
+svn checkout https://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/OscLib
+svn checkout https://cdcvs.fnal.gov/subversion/novaart.pkgs.svn/trunk/Utilities
 
 cd ../
 
@@ -118,5 +122,5 @@ else
 
 fi
 
-cmake ../ -DSRC_ROOT_PARENT=$(readlink -f ../../) -DUSED_UPS=${USE_UPS} -DUSE_GPERFTOOLS=${USE_GPERF} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+cmake ../ -DSRC_ROOT_PARENT=$(readlink -f ../../) -DUSED_UPS=${USE_UPS} -DUSE_GPERFTOOLS=${USE_GPERF} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_CXX_STANDARD=14
 make install -j ${CORES}

@@ -49,7 +49,8 @@ namespace ana
 		  sr->dune.RecoHadEnNumu,
 		  sr->dune.RecoHadEnNue,
 		  sr->dune.RecoLepEnNumu,
-		  sr->dune.RecoLepEnNue);
+		  sr->dune.RecoLepEnNue,
+		  sr->dune.eRec_FromDep);
 
       double scale = 1 + 0.02 * sigma;
       if (sr->dune.isFD) {
@@ -59,6 +60,8 @@ namespace ana
 	sr->dune.RecoHadEnNue  *= scale;
 	sr->dune.RecoLepEnNumu *= scale;
 	sr->dune.RecoLepEnNue  *= scale;
+
+	sr->dune.eRec_FromDep  *= scale;
       }
     }
   };  
