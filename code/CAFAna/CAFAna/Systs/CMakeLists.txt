@@ -9,7 +9,8 @@ set(Systs_implementation_files
   NDRecoSysts.cxx
   NuOnESysts.cxx
   SystComponentScale.cxx
-  Systs.cxx)
+  Systs.cxx
+  SystPriorCovar.cxx)
 
 set(Systs_header_files
   DUNEFluxSysts.h
@@ -23,6 +24,7 @@ set(Systs_header_files
   NuOnESysts.h
   SystComponentScale.h
   Systs.h
+  SystPriorCovar.h
   MissingProtonFakeData.h
   BDTReweighter.h
   GeneratorReweight_nuebar_FD_RHC.h
